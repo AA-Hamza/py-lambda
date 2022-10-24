@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Create the aws lambda function
+
+Parameters:
+  LambdaName:
+    Type: String
+    Default: py-lambda
+    Description: Your lambda name in aws
+  LambdaS3Bucket:
+    Type: String
+    Default: mylambdas
+    Description: Your lambda zip file bucket name
+  LambdaS3Key:
+    Type: String
+    Default: py-lambda.zip
+    Description: Your lambda zip file name inside the bucket
+  EnvVar:
+    Type: String
+    Default: ExistsAsAPlaceHolder
+    Description: An env var that you could substitute below
+
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: lambda-role
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess
+      Path: /
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${LambdaName}
+      Runtime: python3.9
+      Timeout: 10
+      Handler: main.handler
+      Role: !GetAtt LambdaRole.Arn
+      Code:
+        S3Bucket: 
+          Ref: LambdaS3Bucket
+        S3Key: 
+          Ref: LambdaS3Key
+      Environment:
+        Variables:
+          EnvVar:
+            Fn::Sub: ${EnvVar}

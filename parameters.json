@@ -1,0 +1,14 @@
+[
+    {
+        "ParameterKey":"LambdaName",
+        "ParameterValue":"py-lambda"
+    },
+    {
+        "ParameterKey":"LambdaS3Bucket",
+        "ParameterValue":"mylambdas"
+    },
+    {
+        "ParameterKey":"LambdaS3Key",
+        "ParameterValue":"py-lambda.zip"
+    }
+]
